@@ -40,10 +40,10 @@ document.querySelectorAll('a[href="#drop"]').forEach((link) => link.addEventList
 
 // Only product IDs and quantities are stored; prices come from this catalog.
 const catalog = new Map([
-  ['men-quarter-zip', { name: 'Quarter Zip Knit', price: 2490 }],
-  ['men-essential-tee', { name: 'Essential Tee', price: 1290 }],
-  ['women-satin-shirt', { name: 'Satin Crop Shirt', price: 1990 }],
-  ['women-crop-bomber', { name: 'Cropped Bomber', price: 3490 }],
+  ['men-quarter-zip', { name: 'Quarter Zip Knit', price: 1990, image: 'men outfits/Men-01.png' }],
+  ['men-essential-tee', { name: 'Essential Tee', price: 990, image: 'men outfits/Men-02.png' }],
+  ['women-satin-shirt', { name: 'Satin Crop Shirt', price: 1490, image: 'ladies outfits/Ladies-01.png' }],
+  ['women-crop-bomber', { name: 'Cropped Bomber', price: 2790, image: 'ladies outfits/Ladies-02.png' }],
 ]);
 const storageKey = 'colax-youth-bag-v1';
 const bag = new Map();
@@ -77,11 +77,19 @@ function renderBag() {
   let count = 0;
   let total = 0;
   bag.forEach((quantity, id) => {
-    const { name, price } = catalog.get(id);
+    const { name, price, image } = catalog.get(id);
     count += quantity;
     total += price * quantity;
     const item = document.createElement('li');
     item.dataset.product = id;
+    const thumbnail = document.createElement('img');
+    thumbnail.className = 'bag-thumbnail';
+    thumbnail.src = image;
+    thumbnail.alt = name;
+    thumbnail.width = 72;
+    thumbnail.height = 72;
+    const details = document.createElement('div');
+    details.className = 'bag-details';
     const label = document.createElement('span');
     label.className = 'bag-product';
     label.textContent = `${name} · ${currency.format(price)} each`;
@@ -121,7 +129,8 @@ function renderBag() {
     const subtotal = document.createElement('strong');
     subtotal.textContent = currency.format(price * quantity);
     controls.append(decrease, amount, increase, remove);
-    item.append(label, subtotal, controls);
+    details.append(label, subtotal);
+    item.append(thumbnail, details, controls);
     items.append(item);
   });
   const badge = document.querySelector('#bag-count');

@@ -7,12 +7,20 @@ dialog{width:min(500px,calc(100% - 30px));max-height:85svh;background:var(--pape
 @media(max-width:700px){.ticker{font-size:8px;padding:10px}.ticker span:last-child{display:none}header{height:76px;gap:20px;flex-wrap:wrap}.logo{font-size:35px}#menu-toggle{display:block;margin-left:auto}nav{width:100%;order:4;gap:15px;justify-content:space-between;font-size:10px}header:has(#menu-toggle[hidden]){height:auto;padding-block:20px}nav.ready{display:none;position:absolute;top:100%;left:0;background:var(--paper);border-bottom:2px solid var(--ink);padding:20px 5%}nav.open{display:flex;flex-direction:column;gap:5px}.hero{grid-template-columns:1fr}.hero-copy{padding:25px 6% 20px}h1{font-size:clamp(70px,16vw,110px);margin:35px 0 25px;letter-spacing:-4px}h1 sup{right:5%}.hero-copy>p{font-size:12px}.hero-foot{margin-top:20px}.hero-photo{border-left:0;border-top:2px solid var(--ink)}.manifesto-strip{gap:12px;padding:20px 4%;font-size:14px;letter-spacing:-.5px}.manifesto-strip span:nth-child(even){font-size:26px}.manifesto-strip span:last-child{display:none}.section{padding:55px 5%}.section-top{align-items:start;margin-bottom:25px}h2{letter-spacing:-1.5px}.section-top>p{display:none}.drop-toolbar{align-items:start;flex-direction:column;gap:16px}.filters button{padding:10px 12px}.product-grid{gap:25px 12px}.product-tag{font-size:7px;left:8px;top:8px;padding:6px}[data-add]{left:6px;right:6px;bottom:6px;font-size:8px;padding:11px 8px}.product-meta{flex-direction:column;gap:7px}.product-meta,.product-meta h3{font-size:10px}.culture{grid-template-columns:1fr;gap:25px;padding:50px 6%}.culture h2{font-size:60px}.culture-star{position:absolute;right:0;bottom:0;font-size:70px;margin:0}.culture-copy p{font-size:13px}.issue{display:none}.final-cta{padding:60px 5%}.final-cta h2{letter-spacing:-2px;font-size:clamp(50px,11vw,77px)}.footer-top{flex-wrap:wrap}.footer-top .logo{font-size:52px}.footer-top p{font-size:10px}.footer-top>a:last-child{width:100%}.footer-bottom{flex-direction:column;gap:13px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition:none!important}}
 
-#bag-items li{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:12px}
+#bag-items li{display:grid;grid-template-columns:72px minmax(0,1fr);align-items:start;gap:12px}
+.bag-thumbnail{grid-row:span 2;width:72px;height:72px;object-fit:contain;background:#fff;border:1px solid var(--line)}
+.bag-details{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 12px;min-width:0}
+.bag-details strong{white-space:nowrap;line-height:1.6}
 .bag-product{line-height:1.6}
-.bag-controls{grid-column:1/-1;display:flex;align-items:center;gap:12px}
+.bag-controls{grid-column:2;display:flex;flex-wrap:wrap;align-items:center;gap:8px}
 #bag-items .bag-controls button{min-width:44px;min-height:44px;border:1px solid var(--line);text-decoration:none;font-size:14px}
 #bag-items .bag-controls button:last-child{margin-left:auto;padding-inline:12px;font-size:11px;text-decoration:underline}
 #bag-items button:disabled{opacity:.4;cursor:default}
+@media(max-width:400px){
+ dialog{padding:20px}
+ #bag-items li{grid-template-columns:56px minmax(0,1fr);gap:10px}
+ .bag-thumbnail{width:56px;height:56px}
+}
 .bag-total{display:flex;justify-content:space-between;gap:16px;border-top:2px solid var(--ink);padding-top:18px;font-size:14px}
 
 /* Angled tags keep the editorial streetwear character. */
