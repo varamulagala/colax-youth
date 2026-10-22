@@ -26,6 +26,7 @@ window.matchMedia('(min-width: 701px)').addEventListener('change', closeMenu);
 const filters = document.querySelectorAll('[data-filter]');
 document.querySelector('.filters').hidden = false;
 function filterProducts(category) {
+  document.querySelector('.product-grid').dataset.filter = category;
   filters.forEach((button) => button.setAttribute('aria-pressed', String(button.dataset.filter === category)));
   const products = document.querySelectorAll('.product-grid [data-category]');
   let visibleCount = 0;

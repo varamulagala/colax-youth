@@ -49,8 +49,13 @@ footer{background:var(--ink);color:var(--paper)}
 .product-tag{background:var(--paper);color:var(--ink)}
 .sand{background:var(--sand);color:var(--ink)}
 .burgundy{background:var(--accent);color:var(--paper)}
-[data-add]{background:var(--paper);color:var(--ink);border-color:var(--ink)}
-[data-add]:hover{background:var(--accent);color:var(--paper)}
+.product-grid{--bag-background:#000;--bag-foreground:var(--paper)}
+.product-grid[data-filter="women"]{--bag-background:var(--accent);--bag-foreground:var(--paper)}
+.product-grid[data-filter="men"]{--bag-background:#176B68;--bag-foreground:var(--paper)}
+.product-grid [data-category="men"] .product-tag{background:#176B68;color:var(--paper)}
+.product-grid [data-category="women"] .product-tag{background:var(--accent);color:var(--paper)}
+.product-grid [data-add]{background:var(--bag-background);color:var(--bag-foreground);border-color:var(--bag-foreground);transition:background .2s,color .2s}
+.product-grid [data-add]:hover{background:var(--bag-background);color:var(--bag-foreground);text-decoration:underline;text-underline-offset:3px}
 article>p,.sample-note,.bag-note,#empty{color:var(--ink)}
 .photo-label,.editorial-image>span{background:var(--paper);color:var(--ink)}
 .skip{background:var(--paper);color:var(--ink)}
