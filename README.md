@@ -5,6 +5,7 @@ A separate youth streetwear concept made with HTML, CSS, and vanilla JavaScript.
 Open index.html in your browser. No installation or build step is needed.
 
 - index.html: campaign, sample products, culture section, and lookbook.
+- collection.html: full clothing gallery reached through See More, displaying all 13 men's and 9 women's images with All / Men / Women filters. The home page keeps its four featured styles.
 - style.css: warm ivory, burgundy, charcoal, and taupe palette, bold typography, responsive layouts.
 - script.js: mobile navigation, All / Men / Women collection filters, and a persistent demo bag with quantity controls and INR totals. The main collection displays two men's styles (Men-01 and Men-02) and two women's styles (Ladies-01 and Ladies-02).
 

@@ -96,6 +96,11 @@ header #bag-toggle{position:relative;display:inline-flex;align-items:center;just
 @media(max-width:700px){.hero-photo .sticker{top:8px;right:12px;font-size:11px;padding:11px 10px}}
 
 /* Square collection images keep the full garment visible. */
+.collection-more{display:flex;justify-content:center;margin-top:38px}
+.collection-page .collection-back{margin-bottom:38px;color:var(--accent)}
+.collection-title{font-size:clamp(36px,5.4vw,78px);font-weight:900;line-height:1;letter-spacing:-2px;margin:0}
+.collection-page .product-grid{row-gap:38px}
+header a[aria-current=page]{text-decoration:underline;text-underline-offset:5px}
 .drop .product-photo{aspect-ratio:1;background:#fff}
 .drop .product-photo img{object-fit:contain}
 
