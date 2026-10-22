@@ -95,6 +95,10 @@ header #bag-toggle{position:relative;display:inline-flex;align-items:center;just
 .hero-photo .sticker{top:12px;right:16px;font-size:13px;padding:15px 13px;line-height:1.1;transform:rotate(7deg);box-shadow:3px 3px 0 var(--sand)}
 @media(max-width:700px){.hero-photo .sticker{top:8px;right:12px;font-size:11px;padding:11px 10px}}
 
+/* Square collection images keep the full garment visible. */
+.drop .product-photo{aspect-ratio:1;background:#fff}
+.drop .product-photo img{object-fit:contain}
+
 /* The Colax Edit: five equal portraits in a staggered, centered gallery. */
 .lookbook{padding-block:96px}
 .lookbook-heading{display:flex;justify-content:space-between;align-items:end;gap:40px;margin-bottom:38px}

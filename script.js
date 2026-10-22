@@ -27,19 +27,23 @@ const filters = document.querySelectorAll('[data-filter]');
 document.querySelector('.filters').hidden = false;
 function filterProducts(category) {
   filters.forEach((button) => button.setAttribute('aria-pressed', String(button.dataset.filter === category)));
-  document.querySelectorAll('[data-category]').forEach((product) => {
+  const products = document.querySelectorAll('.product-grid [data-category]');
+  let visibleCount = 0;
+  products.forEach((product) => {
     product.hidden = category !== 'all' && product.dataset.category !== category;
+    if (!product.hidden) visibleCount++;
   });
+  document.querySelector('#collection-count').textContent = `${category.toUpperCase()} / ${String(visibleCount).padStart(2, '0')} STYLES`;
 }
 filters.forEach((button) => button.addEventListener('click', () => filterProducts(button.dataset.filter)));
 document.querySelectorAll('a[href="#drop"]').forEach((link) => link.addEventListener('click', () => filterProducts('all')));
 
 // Only product IDs and quantities are stored; prices come from this catalog.
 const catalog = new Map([
-  ['off-duty-tee', { name: 'Off Duty Tee', price: 1290 }],
-  ['after-hours-jacket', { name: 'After Hours Jacket', price: 4990 }],
-  ['outsider-tee', { name: 'Outsider Tee', price: 1490 }],
-  ['street-shift-denim', { name: 'Street Shift Denim', price: 3490 }],
+  ['men-quarter-zip', { name: 'Quarter Zip Knit', price: 2490 }],
+  ['men-essential-tee', { name: 'Essential Tee', price: 1290 }],
+  ['women-satin-shirt', { name: 'Satin Crop Shirt', price: 1990 }],
+  ['women-crop-bomber', { name: 'Cropped Bomber', price: 3490 }],
 ]);
 const storageKey = 'colax-youth-bag-v1';
 const bag = new Map();
