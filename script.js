@@ -186,3 +186,45 @@ document.querySelector('#bag-clear').addEventListener('click', () => {
 });
 renderBag();
 document.querySelector('#year').textContent = new Date().getFullYear();
+
+// Show a touch-friendly shortcut after the first screen of content.
+const backToTop = document.createElement('button');
+backToTop.type = 'button';
+backToTop.className = 'back-to-top';
+backToTop.setAttribute('aria-label', 'Back to top');
+backToTop.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 12 6-6 6 6M12 6v14"/></svg>';
+backToTop.hidden = true;
+document.body.append(backToTop);
+function updateBackToTop() {
+  backToTop.hidden = window.scrollY < window.innerHeight * 0.75;
+  if (backToTop.hidden) return;
+  const bounds = backToTop.getBoundingClientRect();
+  const behind = document.elementsFromPoint(bounds.left + bounds.width / 2, bounds.top + bounds.height / 2)
+    .find((element) => !backToTop.contains(element));
+  let section = behind?.closest('section, footer, header, main') || document.body;
+  let channels;
+  while (section) {
+    const values = getComputedStyle(section).backgroundColor.match(/[\d.]+/g)?.map(Number);
+    if (values && (values.length === 3 || values[3] === 1)) {
+      channels = values.slice(0, 3);
+      break;
+    }
+    section = section.parentElement;
+  }
+  const inverse = (channels || [247, 241, 232]).map((value) => 255 - value);
+  const luminance = inverse.map((value) => {
+    const channel = value / 255;
+    return channel <= 0.04045 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4;
+  }).reduce((sum, value, index) => sum + value * [0.2126, 0.7152, 0.0722][index], 0);
+  backToTop.style.setProperty('--top-background', `rgb(${inverse.join(', ')})`);
+  backToTop.style.setProperty('--top-foreground', luminance > 0.179 ? '#000' : '#fff');
+}
+window.addEventListener('scroll', updateBackToTop, { passive: true });
+window.addEventListener('resize', updateBackToTop);
+updateBackToTop();
+backToTop.addEventListener('click', () => {
+  const main = document.querySelector('#main');
+  main.setAttribute('tabindex', '-1');
+  main.focus({ preventScroll: true });
+  window.scrollTo({ top: 0, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
+});
