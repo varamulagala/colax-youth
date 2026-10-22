@@ -40,10 +40,28 @@ document.querySelectorAll('a[href="#drop"]').forEach((link) => link.addEventList
 
 // Only product IDs and quantities are stored; prices come from this catalog.
 const catalog = new Map([
-  ['men-quarter-zip', { name: 'Quarter Zip Knit', price: 1990, image: 'men outfits/Men-01.png' }],
-  ['men-essential-tee', { name: 'Essential Tee', price: 990, image: 'men outfits/Men-02.png' }],
-  ['women-satin-shirt', { name: 'Satin Crop Shirt', price: 1490, image: 'ladies outfits/Ladies-01.png' }],
-  ['women-crop-bomber', { name: 'Cropped Bomber', price: 2790, image: 'ladies outfits/Ladies-02.png' }],
+  ["men-quarter-zip", {"name":"Quarter Zip Knit","price":1990,"image":"men outfits/Men-01.png"}],
+  ["men-essential-tee", {"name":"Essential Tee","price":990,"image":"men outfits/Men-02.png"}],
+  ["men-style-03", {"name":"Men's Style 03","price":1190,"image":"men outfits/Men-03.png"}],
+  ["men-style-04", {"name":"Men's Style 04","price":1490,"image":"men outfits/Men-04.png"}],
+  ["men-style-05", {"name":"Men's Style 05","price":1790,"image":"men outfits/Men-05.png"}],
+  ["men-style-06", {"name":"Men's Style 06","price":1490,"image":"men outfits/Men-06.png"}],
+  ["men-style-07", {"name":"Men's Style 07","price":1990,"image":"men outfits/Men-07.png"}],
+  ["men-style-08", {"name":"Men's Style 08","price":2290,"image":"men outfits/Men-08.png"}],
+  ["men-style-09", {"name":"Men's Style 09","price":1690,"image":"men outfits/Men-09.png"}],
+  ["men-style-10", {"name":"Men's Style 10","price":1890,"image":"men outfits/Men-10.png"}],
+  ["men-style-11", {"name":"Men's Style 11","price":2490,"image":"men outfits/Men-11.png"}],
+  ["men-style-12", {"name":"Men's Style 12","price":1790,"image":"men outfits/Men-12.png"}],
+  ["men-style-13", {"name":"Men's Style 13","price":1590,"image":"men outfits/Men-13.png"}],
+  ["women-satin-shirt", {"name":"Satin Crop Shirt","price":1490,"image":"ladies outfits/Ladies-01.png"}],
+  ["women-crop-bomber", {"name":"Cropped Bomber","price":2790,"image":"ladies outfits/Ladies-02.png"}],
+  ["women-style-03", {"name":"Women's Style 03","price":1290,"image":"ladies outfits/Ladies-03.png"}],
+  ["women-style-04", {"name":"Women's Style 04","price":1590,"image":"ladies outfits/Ladies-04.png"}],
+  ["women-style-05", {"name":"Women's Style 05","price":1790,"image":"ladies outfits/Ladies-05.png"}],
+  ["women-style-06", {"name":"Women's Style 06","price":1990,"image":"ladies outfits/Ladies-06.png"}],
+  ["women-style-07", {"name":"Women's Style 07","price":1490,"image":"ladies outfits/Ladies-07.png"}],
+  ["women-style-08", {"name":"Women's Style 08","price":2290,"image":"ladies outfits/Ladies-08.png"}],
+  ["women-style-09", {"name":"Women's Style 09","price":1890,"image":"ladies outfits/Ladies-09.png"}],
 ]);
 const storageKey = 'colax-youth-bag-v1';
 const bag = new Map();
