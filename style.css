@@ -247,6 +247,7 @@ header #bag-toggle{position:relative;display:inline-flex;align-items:center;just
 .search-empty .button{background:var(--sort-accent);border-color:var(--sort-accent);color:var(--paper)}
 .collection-controls{display:flex;align-items:center;flex-wrap:wrap;gap:16px 24px;font-size:9px;letter-spacing:1px}
 .collection-controls #collection-count{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.drop:not(.collection-page) #collection-count{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 .price-sort{position:relative;display:flex;align-items:stretch;max-width:100%;border:1px solid var(--sort-accent);font-weight:800;transition:border-color .2s}
 .price-sort>span{display:flex;align-items:center;padding:0 12px;background:var(--sort-accent);color:var(--paper);font-size:9px;letter-spacing:.5px;white-space:nowrap;transition:background .2s}
 .price-sort::after{content:"";position:absolute;right:16px;top:50%;width:7px;height:7px;border-right:1.5px solid var(--sort-accent);border-bottom:1.5px solid var(--sort-accent);transform:translateY(-70%) rotate(45deg);pointer-events:none}
@@ -263,6 +264,59 @@ header #bag-toggle{position:relative;display:inline-flex;align-items:center;just
 header a[aria-current=page]{text-decoration:underline;text-underline-offset:5px}
 .drop .product-photo{aspect-ratio:1;background:#fff}
 .drop .product-photo img{object-fit:contain}
+.product-image-link{display:block;width:100%;height:100%}
+.product-meta h3 a:hover{text-decoration:underline;text-underline-offset:3px}
+/* Dedicated outfit pages keep the full garment visible and the bag shared. */
+.product-page{--detail-accent:#176B68;--bag-background:#176B68;--bag-foreground:var(--paper)}
+.product-page[data-category="women"]{--detail-accent:var(--accent);--bag-background:var(--accent)}
+.product-main{max-width:1500px;margin:auto;padding:32px 5% 72px}
+nav.product-breadcrumbs{display:flex;position:static;flex-direction:row;flex-wrap:wrap;justify-content:flex-start;width:auto;gap:10px;order:initial;font-size:9px;font-weight:700;letter-spacing:.6px;padding:0;margin-bottom:28px;color:#65594f}
+.product-breadcrumbs a{padding:4px 0}
+.product-breadcrumbs [aria-current]{padding:4px 0}
+.product-breadcrumbs>span:not([aria-current]){align-self:center}
+.product-detail{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:6%;align-items:start}
+.detail-image{position:relative;background:#fff;border:1px solid var(--line)}
+.detail-image>img{aspect-ratio:1;object-fit:contain}
+.detail-category{position:absolute;left:18px;top:18px;background:var(--detail-accent);color:var(--paper);padding:9px 12px;font-size:8px;font-weight:800;letter-spacing:1px}
+.detail-copy{padding:14px 0 0;min-width:0}
+.detail-copy .eyebrow{color:var(--detail-accent);letter-spacing:1.5px;margin-bottom:20px}
+.detail-copy h1{font-size:clamp(30px,3.4vw,52px);line-height:1.05;letter-spacing:-1.5px;text-transform:uppercase;margin:0 0 24px}
+.detail-price{display:flex;align-items:baseline;flex-wrap:wrap;gap:12px}
+.detail-price>strong{font-size:24px;color:var(--detail-accent)}
+.detail-price del{font-size:14px;color:#65594f}
+.detail-price>span{font-size:9px;letter-spacing:.8px;padding:5px 8px;background:var(--detail-accent);color:var(--paper);font-weight:800}
+.detail-savings{font-size:11px;color:var(--detail-accent);margin:10px 0 24px}
+.detail-description{font-size:13px;line-height:1.9;color:#65594f;max-width:450px}
+.detail-colour{display:flex;align-items:center;justify-content:space-between;gap:20px;border-block:1px solid var(--line);padding:18px 0;margin-top:24px}
+.detail-label,.product-page .size-options legend{font-size:9px;letter-spacing:1px;font-weight:800}
+.colour-value{display:flex;align-items:center;gap:10px;font-size:12px}
+.colour-swatch{width:24px;height:24px;border:1px solid #65594f;background:var(--swatch);box-shadow:inset 0 0 0 3px var(--paper)}
+.product-page .size-options{margin:24px 0 18px}
+.detail-add{width:100%;background:var(--detail-accent);border-color:var(--detail-accent);color:var(--paper)}
+.detail-add:hover{background:var(--detail-accent)}
+.product-page a:focus-visible,.detail-add:focus-visible{outline-color:var(--detail-accent)}
+#product-error{font-size:12px;line-height:1.6;color:var(--accent)}
+#product-error:empty{display:none}
+.detail-demo{font-size:10px;color:#65594f;margin:14px 0 28px}
+.detail-facts details{border-top:1px solid var(--line);padding:18px 0}
+.detail-facts summary{font-size:10px;font-weight:800;letter-spacing:1px;cursor:pointer}
+.detail-facts dl,.detail-facts p{font-size:12px;line-height:1.8;margin-bottom:0}
+.detail-facts dl>div{display:flex;justify-content:space-between;gap:16px;padding-top:6px}
+.detail-facts dt{color:#65594f}
+.detail-facts dd{margin:0;text-align:right}
+.related-products{margin-top:64px;padding-top:32px;border-top:1px solid var(--line)}
+.related-heading{display:flex;justify-content:space-between;align-items:end;gap:24px;margin-bottom:24px}
+.related-heading .eyebrow{color:var(--detail-accent);margin-bottom:14px}
+.related-heading h2{font-size:clamp(28px,3.3vw,44px);letter-spacing:-1px}
+.related-heading .text-link{font-size:9px;color:var(--detail-accent);white-space:nowrap}
+.related-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}
+.related-card{min-width:0}
+.related-card img{aspect-ratio:1;object-fit:contain;background:#fff;border:1px solid var(--line)}
+.related-card h3{font-size:11px;text-transform:uppercase;line-height:1.6;margin:14px 0 5px}
+.related-card>span{font-size:12px;font-weight:700;color:var(--detail-accent)}
+.related-card:hover h3{text-decoration:underline;text-underline-offset:3px}
+@media(max-width:900px){.product-detail{gap:4%}.detail-copy h1{font-size:32px}}
+@media(max-width:700px){.product-main{padding-top:24px}.product-detail{grid-template-columns:minmax(0,1fr);gap:28px}.detail-copy{padding:0}.detail-copy h1{font-size:clamp(30px,7vw,44px)}.related-heading{align-items:start;flex-direction:column;gap:12px}.related-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:24px 14px}.related-card h3{font-size:10px}.detail-category{left:12px;top:12px}.related-products{margin-top:40px}}
 
 /* The Colax Edit: five equal portraits in a staggered, centered gallery. */
 .lookbook{padding-block:96px}

@@ -27,8 +27,10 @@ const filters = document.querySelectorAll('[data-filter]');
 const productSearch = document.querySelector('#product-search');
 const clearSearch = document.querySelector('#search-clear');
 const noResults = document.querySelector('#no-results');
-document.querySelector('.filters').hidden = false;
+const filterGroup = document.querySelector('.filters');
+if (filterGroup) filterGroup.hidden = false;
 function filterProducts(category) {
+  if (!document.querySelector('.product-grid')) return;
   const terms = (productSearch?.value || '').trim().toLowerCase().split(/\s+/).filter(Boolean);
   document.querySelector('.product-grid').dataset.filter = category;
   filters.forEach((button) => button.setAttribute('aria-pressed', String(button.dataset.filter === category)));
@@ -120,6 +122,9 @@ try {
   });
 } catch { /* A blocked or invalid store must not prevent using the demo. */ }
 const currency = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 });
+function productImagePath(image) {
+  return document.body.classList.contains('product-page') ? `../${image}` : image;
+}
 const dialog = document.querySelector('#bag');
 const items = document.querySelector('#bag-items');
 const toast = document.querySelector('#toast');
@@ -132,7 +137,7 @@ function announce(message, productId, theme) {
   if (product) {
     const thumbnail = document.createElement('img');
     thumbnail.className = 'toast-thumbnail';
-    thumbnail.src = product.image;
+    thumbnail.src = productImagePath(product.image);
     thumbnail.alt = product.name;
     thumbnail.width = 40;
     thumbnail.height = 48;
@@ -183,7 +188,7 @@ function offerUndo(removed, message) {
   products.slice(0, 3).forEach((id) => {
     const product = catalog.get(id);
     const thumbnail = document.createElement('img');
-    thumbnail.src = product.image;
+    thumbnail.src = productImagePath(product.image);
     thumbnail.alt = product.name;
     thumbnail.width = 40;
     thumbnail.height = 48;
@@ -233,7 +238,7 @@ function renderBag() {
     const description = `${name}, ${size ? `size ${size}` : 'size not selected'}`;
     const thumbnail = document.createElement('img');
     thumbnail.className = 'bag-thumbnail';
-    thumbnail.src = image;
+    thumbnail.src = productImagePath(image);
     thumbnail.alt = name;
     thumbnail.width = 72;
     thumbnail.height = 72;
@@ -315,6 +320,16 @@ const sizeForm = sizeDialog.querySelector('form');
 const sizeConfirm = sizeForm.querySelector('[type="submit"]');
 const sizeError = sizeDialog.querySelector('#size-error');
 let pendingProduct;
+function addToBag(id, size) {
+  if (!catalog.has(id) || !sizes.includes(size)) return false;
+  const key = lineKey(id, size);
+  const quantity = bag.get(key)?.quantity || 0;
+  if (quantity >= 99) return false;
+  bag.set(key, { id, size, quantity: quantity + 1 });
+  announce(`${catalog.get(id).name} (size ${size}) added to your demo bag.`, id);
+  updateBag();
+  return true;
+}
 sizeDialog.querySelector('#size-close').addEventListener('click', () => sizeDialog.close());
 sizeDialog.addEventListener('close', () => { pendingProduct = null; });
 sizeForm.addEventListener('change', () => {
@@ -331,12 +346,8 @@ sizeForm.addEventListener('submit', (event) => {
     sizeError.textContent = 'Maximum quantity is 99 per size. Choose another size or update your bag.';
     return;
   }
-  bag.set(key, { id: pendingProduct, size, quantity: quantity + 1 });
-  const addedProduct = pendingProduct;
-  const name = catalog.get(addedProduct).name;
+  addToBag(pendingProduct, size);
   sizeDialog.close();
-  announce(`${name} (size ${size}) added to your demo bag.`, addedProduct);
-  updateBag();
 });
 document.querySelectorAll('[data-add]').forEach((button) => {
   button.hidden = false;

@@ -4,6 +4,8 @@ A separate youth streetwear concept made with HTML, CSS, and vanilla JavaScript.
 
 Open index.html in your browser. No installation or build step is needed.
 
+Each of the 22 outfits has a static detail page in products/, linked from its image and name on both grids. Detail pages include the full garment image, sale price, material, pictured colour, XS–XXL size selection, related styles, and the shared saved bag and demo checkout. Only the pictured colour is offered. After editing catalog data or shared page markup, regenerate with `node scripts/build-products.cjs`. product-detail.js handles inline size selection and uses the same bag logic as the collection popup.
+
 The full collection page includes a Sort By control for sale price (low to high or high to low), plus Featured to restore the original order. Sorting works with All / Men / Women filters. The home page has no sorting control.
 
 Search outfits by name on the full collection page. Search is case-insensitive, matches all entered words, and combines with the selected category and price order. Clear removes the search text; the no-results message offers a reset of search and category. Search and sorting leave the home page unchanged.
