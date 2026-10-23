@@ -85,8 +85,9 @@ const items = document.querySelector('#bag-items');
 const toast = document.querySelector('#toast');
 const closeButton = document.querySelector('#bag-close');
 let toastTimer;
-function announce(message, productId) {
+function announce(message, productId, theme) {
   toast.replaceChildren();
+  toast.dataset.theme = theme || (productId?.startsWith('men-') ? 'men' : productId?.startsWith('women-') ? 'women' : 'mixed');
   const product = catalog.get(productId);
   if (product) {
     const thumbnail = document.createElement('img');
@@ -170,7 +171,7 @@ function offerUndo(removed, message) {
     });
     dismissUndo();
     updateBag();
-    announce('Removed items restored to your bag.');
+    announce('Removed items restored to your bag.', undefined, undoNotice.dataset.theme);
   };
   undoTimer = setTimeout(dismissUndo, 3000);
 }

@@ -73,11 +73,13 @@ h1>span{background:var(--accent);color:var(--paper)}
 .sticker{background:var(--accent);color:var(--paper);border-color:var(--ink);box-shadow:5px 5px 0 var(--sand)}
 .manifesto-strip{background:var(--ink);color:var(--paper)}
 .manifesto-strip span:nth-child(even){color:var(--sand)}
-.culture{background:var(--accent);color:var(--paper);border-color:var(--accent)}
+.culture{background:#176B68;color:var(--paper);border-color:#176B68}
 .final-cta{background:var(--sand);color:var(--ink);border-color:var(--ink)}
 footer{background:var(--ink);color:var(--paper)}
 .black{background:var(--accent);color:var(--paper);border-color:var(--accent)}
 .button:hover{background:var(--ink);color:var(--paper);box-shadow:4px 4px 0 var(--sand)}
+.hero-copy>.button,.collection-more>.button{background:#176B68;color:var(--paper);border-color:#176B68}
+.hero-copy>.button:focus-visible,.collection-more>.button:focus-visible{outline-color:#176B68}
 .filters button{border-color:var(--line)}
 .filters button[data-filter="all"]{--filter-color:#000}
 .filters button[data-filter="men"]{--filter-color:#176B68}
@@ -99,7 +101,9 @@ article>p,.sample-note,.bag-note,#empty{color:var(--ink)}
 .photo-label,.editorial-image>span{background:var(--paper);color:var(--ink)}
 .skip{background:var(--paper);color:var(--ink)}
 dialog{background:var(--paper);color:var(--ink);border-color:var(--accent);color-scheme:light}
-#toast{background:var(--accent);color:var(--paper);border-color:var(--sand)}
+#toast{background:#000;color:var(--paper);border-color:var(--sand)}
+#toast[data-theme="men"]{background:#176B68}
+#toast[data-theme="women"]{background:var(--accent)}
 .bag-total{border-color:var(--line)}
 .footer-bottom{border-color:var(--sand);color:var(--sand)}
 a:focus-visible,button:focus-visible{outline-color:var(--accent)}
