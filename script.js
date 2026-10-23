@@ -85,11 +85,94 @@ const items = document.querySelector('#bag-items');
 const toast = document.querySelector('#toast');
 const closeButton = document.querySelector('#bag-close');
 let toastTimer;
-function announce(message) {
-  toast.textContent = message;
+function announce(message, productId) {
+  toast.replaceChildren();
+  const product = catalog.get(productId);
+  if (product) {
+    const thumbnail = document.createElement('img');
+    thumbnail.className = 'toast-thumbnail';
+    thumbnail.src = product.image;
+    thumbnail.alt = product.name;
+    thumbnail.width = 40;
+    thumbnail.height = 48;
+    toast.append(thumbnail);
+  }
+  const text = document.createElement('span');
+  text.textContent = message;
+  toast.append(text);
   toast.classList.add('visible');
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => toast.classList.remove('visible'), 3000);
+}
+// Keep Undo inside the modal so it remains clickable and keyboard accessible.
+const undoNotice = document.createElement('div');
+undoNotice.className = 'bag-undo';
+undoNotice.hidden = true;
+undoNotice.setAttribute('role', 'status');
+undoNotice.setAttribute('aria-live', 'polite');
+const undoMessage = document.createElement('span');
+undoMessage.className = 'bag-undo-message';
+const undoThumbnails = document.createElement('div');
+undoThumbnails.className = 'bag-undo-thumbnails';
+const undoButton = document.createElement('button');
+undoButton.type = 'button';
+undoButton.textContent = 'UNDO';
+const undoProgress = document.createElement('span');
+undoProgress.className = 'bag-undo-progress';
+undoProgress.setAttribute('aria-hidden', 'true');
+undoNotice.append(undoThumbnails, undoMessage, undoButton, undoProgress);
+dialog.append(undoNotice);
+let undoTimer;
+let undoAnimation;
+function dismissUndo() {
+  clearTimeout(undoTimer);
+  undoAnimation?.cancel();
+  if (document.activeElement === undoButton) closeButton.focus();
+  undoNotice.hidden = true;
+  undoButton.disabled = true;
+  undoButton.onclick = null;
+  undoThumbnails.replaceChildren();
+}
+function offerUndo(removed, message) {
+  dismissUndo();
+  const hasMen = removed.some(({ id }) => id.startsWith('men-'));
+  const hasWomen = removed.some(({ id }) => id.startsWith('women-'));
+  undoNotice.dataset.theme = hasMen && hasWomen ? 'mixed' : hasMen ? 'men' : 'women';
+  const products = [...new Set(removed.map(({ id }) => id))];
+  products.slice(0, 3).forEach((id) => {
+    const product = catalog.get(id);
+    const thumbnail = document.createElement('img');
+    thumbnail.src = product.image;
+    thumbnail.alt = product.name;
+    thumbnail.width = 40;
+    thumbnail.height = 48;
+    undoThumbnails.append(thumbnail);
+  });
+  if (products.length > 3) {
+    const more = document.createElement('span');
+    more.className = 'bag-undo-more';
+    more.textContent = `+${products.length - 3}`;
+    more.setAttribute('aria-label', `${products.length - 3} more outfits`);
+    undoThumbnails.append(more);
+  }
+  undoMessage.textContent = message;
+  undoButton.disabled = false;
+  undoNotice.hidden = false;
+  undoAnimation = undoProgress.animate(
+    [{ transform: 'scaleX(1)' }, { transform: 'scaleX(0)' }],
+    { duration: 3000, easing: 'linear', fill: 'forwards' }
+  );
+  undoButton.onclick = () => {
+    removed.forEach(({ id, size, quantity }) => {
+      const key = lineKey(id, size);
+      const currentQuantity = bag.get(key)?.quantity || 0;
+      bag.set(key, { id, size, quantity: Math.min(99, currentQuantity + quantity) });
+    });
+    dismissUndo();
+    updateBag();
+    announce('Removed items restored to your bag.');
+  };
+  undoTimer = setTimeout(dismissUndo, 3000);
 }
 function updateBag() {
   try { localStorage.setItem(storageKey, JSON.stringify([...bag.values()].map(({ id, quantity, size }) => [id, quantity, size]))); }
@@ -117,7 +200,7 @@ function renderBag() {
     details.className = 'bag-details';
     const label = document.createElement('span');
     label.className = 'bag-product';
-    label.textContent = `${name} · ${size ? `Size: ${size}` : 'Size not selected'} · ${currency.format(price)} each`;
+    label.textContent = `${name} · ${size ? `Size: ${size}` : 'Size not selected'}`;
     const controls = document.createElement('div');
     controls.className = 'bag-controls';
     const decrease = document.createElement('button');
@@ -137,6 +220,7 @@ function renderBag() {
       if (next <= 0) bag.delete(key);
       else bag.set(key, { id, size, quantity: next });
       updateBag();
+      if (next <= 0) offerUndo([{ id, size, quantity }], `${description} removed.`);
       const row = [...items.children].find((element) => element.dataset.product === key);
       const target = row?.querySelector(`[data-action="${action}"]:not(:disabled)`) || row?.querySelector('[data-action="decrease"]');
       (target || closeButton).focus();
@@ -149,6 +233,7 @@ function renderBag() {
     remove.addEventListener('click', () => {
       bag.delete(key);
       updateBag();
+      offerUndo([{ id, size, quantity }], `${description} removed.`);
       closeButton.focus();
     });
     const subtotal = document.createElement('strong');
@@ -204,9 +289,10 @@ sizeForm.addEventListener('submit', (event) => {
     return;
   }
   bag.set(key, { id: pendingProduct, size, quantity: quantity + 1 });
-  const name = catalog.get(pendingProduct).name;
+  const addedProduct = pendingProduct;
+  const name = catalog.get(addedProduct).name;
   sizeDialog.close();
-  announce(`${name} (size ${size}) added to your demo bag.`);
+  announce(`${name} (size ${size}) added to your demo bag.`, addedProduct);
   updateBag();
 });
 document.querySelectorAll('[data-add]').forEach((button) => {
@@ -230,8 +316,11 @@ bagToggle.hidden = false;
 bagToggle.addEventListener('click', () => dialog.showModal());
 closeButton.addEventListener('click', () => dialog.close());
 document.querySelector('#bag-clear').addEventListener('click', () => {
+  const removed = [...bag.values()].map((entry) => ({ ...entry }));
+  if (!removed.length) return;
   bag.clear();
   updateBag();
+  offerUndo(removed, 'Bag cleared.');
   closeButton.focus();
 });
 renderBag();

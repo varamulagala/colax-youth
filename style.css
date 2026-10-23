@@ -40,6 +40,23 @@ dialog{width:min(500px,calc(100% - 30px));max-height:85svh;background:var(--pape
  .bag-thumbnail{width:56px;height:56px}
 }
 .bag-total{display:flex;justify-content:space-between;gap:16px;border-top:2px solid var(--ink);padding-top:18px;font-size:14px}
+.bag-undo{--undo-background:var(--accent);--undo-button:#176B68;position:sticky;bottom:0;display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:18px;padding:12px 16px;background:var(--undo-background);color:var(--paper);border:1px solid var(--sand);font-size:12px;line-height:1.6}
+.bag-undo[data-theme="men"]{--undo-background:#176B68;--undo-button:var(--accent)}
+.bag-undo[data-theme="mixed"]{--undo-background:#000;--undo-button:#fff}
+.bag-undo[data-theme="mixed"] button{color:#000;border-color:#fff}
+.bag-undo button{flex-shrink:0;min-height:44px;padding:8px 12px;border:1px solid currentColor;background:var(--undo-button);color:inherit;font-size:12px;font-weight:800;text-decoration:underline;text-underline-offset:3px}
+.bag-undo button:focus-visible{outline-color:var(--paper)}
+.bag-undo-progress{position:absolute;bottom:0;left:0;width:100%;height:3px;background:var(--paper);transform-origin:left;pointer-events:none}
+.bag-undo-thumbnails{display:flex;align-items:center;gap:4px;flex-shrink:0;max-width:100%;flex-wrap:wrap}
+.bag-undo-thumbnails img,.toast-thumbnail{width:40px;height:48px;object-fit:contain;background:#fff;border:1px solid var(--sand);flex-shrink:0}
+#toast{display:flex;align-items:center;gap:12px}
+#toast>span{min-width:0;overflow-wrap:anywhere}
+.bag-undo-more{display:flex;align-items:center;justify-content:center;min-width:32px;height:48px;font-size:11px;font-weight:800}
+.bag-undo-message{flex:1;min-width:0;overflow-wrap:anywhere}
+@media(max-width:600px){
+ .bag-undo{flex-wrap:wrap;gap:10px}
+ .bag-undo-thumbnails{flex-basis:100%}
+}
 
 /* Angled tags keep the editorial streetwear character. */
 .burgundy,.culture{color:var(--paper)}

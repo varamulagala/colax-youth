@@ -14,3 +14,5 @@ All seven images are AI-generated concept imagery, stored locally in images/. Th
 The demo bag saves product IDs and quantities in localStorage when available; it handles invalid saved data and blocked storage. The lookbook combines Lookbook-01.png through Lookbook-03.png with the original friends and city images in matching 2:3 portrait frames. The desktop gallery pairs a staggered trio with a centered pair, becomes two columns on tablets, and stacks on mobile. Images use object-fit: cover for consistent sizing with minimal cropping.
 
 Add to Bag opens a size picker on both pages, with XS, S, M, L, XL, and XXL. Choose a size before confirming. Each product/size combination has its own quantity and is saved across reloads and pages. Older saved bags are preserved with “Size not selected” rather than assigning a size automatically.
+
+Removing an item (including reducing its quantity to zero) or clearing the bag shows an Undo button inside the bag for three seconds. Undo restores the most recent removal with its sizes and quantities.
