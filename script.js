@@ -24,17 +24,40 @@ document.addEventListener('keydown', (event) => {
 window.matchMedia('(min-width: 701px)').addEventListener('change', closeMenu);
 
 const filters = document.querySelectorAll('[data-filter]');
+const productSearch = document.querySelector('#product-search');
+const clearSearch = document.querySelector('#search-clear');
+const noResults = document.querySelector('#no-results');
 document.querySelector('.filters').hidden = false;
 function filterProducts(category) {
+  const terms = (productSearch?.value || '').trim().toLowerCase().split(/\s+/).filter(Boolean);
   document.querySelector('.product-grid').dataset.filter = category;
   filters.forEach((button) => button.setAttribute('aria-pressed', String(button.dataset.filter === category)));
   const products = document.querySelectorAll('.product-grid [data-category]');
   let visibleCount = 0;
   products.forEach((product) => {
-    product.hidden = category !== 'all' && product.dataset.category !== category;
+    const name = product.querySelector('h3').textContent.toLowerCase();
+    product.hidden = (category !== 'all' && product.dataset.category !== category) || !terms.every((term) => name.includes(term));
     if (!product.hidden) visibleCount++;
   });
-  document.querySelector('#collection-count').textContent = `${category.toUpperCase()} / ${String(visibleCount).padStart(2, '0')} STYLES`;
+  document.querySelector('#collection-count').textContent = `${category.toUpperCase()} / ${String(visibleCount).padStart(2, '0')} STYLES${terms.length ? ' matching your search' : ''}`;
+  if (noResults) noResults.hidden = visibleCount !== 0;
+  if (clearSearch) clearSearch.hidden = !productSearch.value;
+}
+if (productSearch) {
+  productSearch.closest('.collection-search').hidden = false;
+  const applySearch = () => filterProducts(document.querySelector('.product-grid').dataset.filter || 'all');
+  productSearch.addEventListener('input', applySearch);
+  clearSearch.addEventListener('click', () => {
+    productSearch.value = '';
+    applySearch();
+    productSearch.focus();
+  });
+  document.querySelector('#search-reset').addEventListener('click', () => {
+    productSearch.value = '';
+    filterProducts('all');
+    productSearch.focus();
+  });
+  applySearch();
 }
 filters.forEach((button) => button.addEventListener('click', () => filterProducts(button.dataset.filter)));
 document.querySelectorAll('a[href="#drop"]').forEach((link) => link.addEventListener('click', () => filterProducts('all')));
@@ -64,6 +87,23 @@ const catalog = new Map([
   ["women-style-08", {"name":"Champagne Satin Skirt","price":1603,"image":"ladies outfits/Ladies-08.png","originalPrice":2290}],
   ["women-style-09", {"name":"Light Wash Straight Leg Jeans","price":1323,"image":"ladies outfits/Ladies-09.png","originalPrice":1890}],
 ]);
+// Sorting is available only on the full collection page; use catalog sale prices.
+const priceSort = document.querySelector('#price-sort');
+if (priceSort) {
+  const grid = document.querySelector('.product-grid');
+  const featuredProducts = [...grid.children];
+  const priceOf = (product) => catalog.get(product.querySelector('[data-add]').dataset.add).price;
+  function sortProducts() {
+    const products = [...featuredProducts];
+    if (priceSort.value === 'price-asc') products.sort((a, b) => priceOf(a) - priceOf(b));
+    else if (priceSort.value === 'price-desc') products.sort((a, b) => priceOf(b) - priceOf(a));
+    // Move existing cards so their size-picker listeners and category visibility stay intact.
+    grid.append(...products);
+  }
+  priceSort.closest('label').hidden = false;
+  priceSort.addEventListener('change', sortProducts);
+  sortProducts();
+}
 const sizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
 const storageKey = 'colax-youth-bag-v2';
 const lineKey = (id, size) => `${id}:${size || ''}`;
@@ -253,6 +293,8 @@ function renderBag() {
   document.querySelector('#bag-total').textContent = currency.format(total);
   document.querySelector('#empty').hidden = count > 0;
   document.querySelector('#bag-clear').hidden = count === 0;
+  const checkoutButton = document.querySelector('#checkout-open');
+  if (checkoutButton) checkoutButton.hidden = count === 0;
 }
 // One native modal serves every outfit on both pages, including keyboard focus handling.
 const sizeDialog = document.createElement('dialog');
