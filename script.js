@@ -39,7 +39,7 @@ function filterProducts(category) {
 filters.forEach((button) => button.addEventListener('click', () => filterProducts(button.dataset.filter)));
 document.querySelectorAll('a[href="#drop"]').forEach((link) => link.addEventListener('click', () => filterProducts('all')));
 
-// Only product IDs and quantities are stored; prices come from this catalog.
+// Prices and product details always come from this catalog.
 const catalog = new Map([
   ["men-quarter-zip", {"name":"Cream Quarter Zip Knit","price":1393,"image":"men outfits/Men-01.png","originalPrice":1990}],
   ["men-essential-tee", {"name":"White Essential Tee","price":693,"image":"men outfits/Men-02.png","originalPrice":990}],
@@ -64,13 +64,18 @@ const catalog = new Map([
   ["women-style-08", {"name":"Champagne Satin Skirt","price":1603,"image":"ladies outfits/Ladies-08.png","originalPrice":2290}],
   ["women-style-09", {"name":"Light Wash Straight Leg Jeans","price":1323,"image":"ladies outfits/Ladies-09.png","originalPrice":1890}],
 ]);
-const storageKey = 'colax-youth-bag-v1';
+const sizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
+const storageKey = 'colax-youth-bag-v2';
+const lineKey = (id, size) => `${id}:${size || ''}`;
 const bag = new Map();
 try {
-  const saved = JSON.parse(localStorage.getItem(storageKey));
+  const current = localStorage.getItem(storageKey);
+  const saved = JSON.parse(current ?? localStorage.getItem('colax-youth-bag-v1'));
   if (Array.isArray(saved)) saved.forEach((entry) => {
-    if (Array.isArray(entry) && catalog.has(entry[0]) && Number.isInteger(entry[1]) && entry[1] > 0 && entry[1] <= 99) {
-      bag.set(entry[0], entry[1]);
+    const [id, quantity, size] = Array.isArray(entry) ? entry : [];
+    const validSize = current === null ? size === undefined : size === null || sizes.includes(size);
+    if (catalog.has(id) && Number.isInteger(quantity) && quantity > 0 && quantity <= 99 && validSize) {
+      bag.set(lineKey(id, size), { id, quantity, size: size || null });
     }
   });
 } catch { /* A blocked or invalid store must not prevent using the demo. */ }
@@ -87,7 +92,7 @@ function announce(message) {
   toastTimer = setTimeout(() => toast.classList.remove('visible'), 3000);
 }
 function updateBag() {
-  try { localStorage.setItem(storageKey, JSON.stringify([...bag])); }
+  try { localStorage.setItem(storageKey, JSON.stringify([...bag.values()].map(({ id, quantity, size }) => [id, quantity, size]))); }
   catch { announce('Bag updated. Browser storage is unavailable; items will reset on reload.'); }
   renderBag();
 }
@@ -95,12 +100,13 @@ function renderBag() {
   items.replaceChildren();
   let count = 0;
   let total = 0;
-  bag.forEach((quantity, id) => {
+  bag.forEach(({ id, quantity, size }, key) => {
     const { name, price, image } = catalog.get(id);
     count += quantity;
     total += price * quantity;
     const item = document.createElement('li');
-    item.dataset.product = id;
+    item.dataset.product = key;
+    const description = `${name}, ${size ? `size ${size}` : 'size not selected'}`;
     const thumbnail = document.createElement('img');
     thumbnail.className = 'bag-thumbnail';
     thumbnail.src = image;
@@ -111,13 +117,13 @@ function renderBag() {
     details.className = 'bag-details';
     const label = document.createElement('span');
     label.className = 'bag-product';
-    label.textContent = `${name} · ${currency.format(price)} each`;
+    label.textContent = `${name} · ${size ? `Size: ${size}` : 'Size not selected'} · ${currency.format(price)} each`;
     const controls = document.createElement('div');
     controls.className = 'bag-controls';
     const decrease = document.createElement('button');
     decrease.textContent = '−';
     decrease.dataset.action = 'decrease';
-    decrease.setAttribute('aria-label', `Decrease quantity of ${name}`);
+    decrease.setAttribute('aria-label', `Decrease quantity of ${description}`);
     const amount = document.createElement('span');
     amount.textContent = quantity;
     amount.setAttribute('aria-label', `Quantity: ${quantity}`);
@@ -125,13 +131,13 @@ function renderBag() {
     increase.textContent = '+';
     increase.dataset.action = 'increase';
     increase.disabled = quantity >= 99;
-    increase.setAttribute('aria-label', `Increase quantity of ${name}`);
+    increase.setAttribute('aria-label', `Increase quantity of ${description}`);
     const changeQuantity = (change, action) => {
       const next = quantity + change;
-      if (next <= 0) bag.delete(id);
-      else bag.set(id, next);
+      if (next <= 0) bag.delete(key);
+      else bag.set(key, { id, size, quantity: next });
       updateBag();
-      const row = [...items.children].find((element) => element.dataset.product === id);
+      const row = [...items.children].find((element) => element.dataset.product === key);
       const target = row?.querySelector(`[data-action="${action}"]:not(:disabled)`) || row?.querySelector('[data-action="decrease"]');
       (target || closeButton).focus();
     };
@@ -139,9 +145,9 @@ function renderBag() {
     increase.addEventListener('click', () => changeQuantity(1, 'increase'));
     const remove = document.createElement('button');
     remove.textContent = 'Remove';
-    remove.setAttribute('aria-label', `Remove ${name} from preview bag`);
+    remove.setAttribute('aria-label', `Remove ${description} from preview bag`);
     remove.addEventListener('click', () => {
-      bag.delete(id);
+      bag.delete(key);
       updateBag();
       closeButton.focus();
     });
@@ -162,17 +168,61 @@ function renderBag() {
   document.querySelector('#empty').hidden = count > 0;
   document.querySelector('#bag-clear').hidden = count === 0;
 }
+// One native modal serves every outfit on both pages, including keyboard focus handling.
+const sizeDialog = document.createElement('dialog');
+sizeDialog.id = 'size-picker';
+sizeDialog.setAttribute('aria-labelledby', 'size-title');
+sizeDialog.innerHTML = `
+  <div class="dialog-heading"><h2 id="size-title">CHOOSE YOUR SIZE.</h2><button type="button" id="size-close" aria-label="Cancel size selection">✕</button></div>
+  <p id="size-product" class="size-product"></p>
+  <form id="size-form">
+    <fieldset class="size-options"><legend>Select a size</legend>
+      ${sizes.map((size) => `<label><input type="radio" name="size" value="${size}" required><span>${size}</span></label>`).join('')}
+    </fieldset>
+    <p id="size-error" role="alert"></p>
+    <button type="submit" class="button black size-confirm" disabled>ADD TO BAG <span aria-hidden="true">+</span></button>
+  </form>`;
+document.body.append(sizeDialog);
+const sizeForm = sizeDialog.querySelector('form');
+const sizeConfirm = sizeForm.querySelector('[type="submit"]');
+const sizeError = sizeDialog.querySelector('#size-error');
+let pendingProduct;
+sizeDialog.querySelector('#size-close').addEventListener('click', () => sizeDialog.close());
+sizeDialog.addEventListener('close', () => { pendingProduct = null; });
+sizeForm.addEventListener('change', () => {
+  sizeConfirm.disabled = false;
+  sizeError.textContent = '';
+});
+sizeForm.addEventListener('submit', (event) => {
+  event.preventDefault();
+  const size = new FormData(sizeForm).get('size');
+  if (!catalog.has(pendingProduct) || !sizes.includes(size)) return;
+  const key = lineKey(pendingProduct, size);
+  const quantity = bag.get(key)?.quantity || 0;
+  if (quantity >= 99) {
+    sizeError.textContent = 'Maximum quantity is 99 per size. Choose another size or update your bag.';
+    return;
+  }
+  bag.set(key, { id: pendingProduct, size, quantity: quantity + 1 });
+  const name = catalog.get(pendingProduct).name;
+  sizeDialog.close();
+  announce(`${name} (size ${size}) added to your demo bag.`);
+  updateBag();
+});
 document.querySelectorAll('[data-add]').forEach((button) => {
   button.hidden = false;
+  button.setAttribute('aria-haspopup', 'dialog');
+  button.setAttribute('aria-controls', 'size-picker');
   button.addEventListener('click', () => {
-    const id = button.dataset.add;
-    if ((bag.get(id) || 0) >= 99) {
-      announce('Maximum quantity is 99 per product.');
-      return;
-    }
-    bag.set(id, (bag.get(id) || 0) + 1);
-    announce(`${catalog.get(id).name} added to your demo bag.`);
-    updateBag();
+    pendingProduct = button.dataset.add;
+    const theme = getComputedStyle(button.closest('.product-grid'));
+    sizeDialog.style.setProperty('--bag-background', theme.getPropertyValue('--bag-background'));
+    sizeDialog.style.setProperty('--bag-foreground', theme.getPropertyValue('--bag-foreground'));
+    sizeForm.reset();
+    sizeConfirm.disabled = true;
+    sizeError.textContent = '';
+    sizeDialog.querySelector('#size-product').textContent = catalog.get(pendingProduct).name;
+    sizeDialog.showModal();
   });
 });
 const bagToggle = document.querySelector('#bag-toggle');
